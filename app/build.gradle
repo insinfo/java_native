@@ -32,5 +32,13 @@ nativeBuild {
   imageName = 'Example'
   mainClass = 'demo.Example'
   verbose = true // Add verbose output, defaults to false
-  useFatJar = true 
+  useFatJar = true
+  // Advanced options
+  // Passes '-H:Extra' to the native image builder options.
+  // This can be used to pass parameters which are not directly supported by this extension
+  buildArgs.add('--native-image-info')
+  buildArgs.add('--verbose')
+
+ // Development options
+ //agent = true // Enables the reflection agent. Can be also set on command line using '-Pagent'
 }
