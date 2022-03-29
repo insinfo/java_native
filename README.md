@@ -1,7 +1,7 @@
  
 ## documentação gradle
 https://docs.gradle.org/current/samples/sample_building_java_applications.html
-## para criar a estrtura de um projeto gradle
+## para criar a estrutura de um projeto gradle
 gradle init  
 ## para inicializar as variaveis de ambiente de compilação C++
 "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
@@ -9,7 +9,7 @@ or
 "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 
 or
-## not working
+## powershell not working
 powershell.exe -noe -c '&{Import-Module """C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"""; Enter-VsDevShell 1213e5af}'
 
 or 

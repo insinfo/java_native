@@ -7,7 +7,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
 
-
 public class Example {
 
     public static void main(String[] args) {
@@ -26,6 +25,4 @@ public class Example {
             System.out.println("Error: " + e);
         }
     }
-
-
 }
