@@ -34,6 +34,9 @@ native-image -jar Example.jar
 ## para build com reflexão com gradle
 ./gradlew -Pagent nativeBuild
 ./gradlew nativeBuild
+or
+.\gradlew -Pagent nativeBuild
+.\gradlew nativeBuild
 
 ## para executar o executavel final
 .\app\build\native\nativeBuild\Example.exe
