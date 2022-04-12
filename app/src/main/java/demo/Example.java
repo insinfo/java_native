@@ -11,7 +11,7 @@ public class Example {
 
     public static void main(String[] args) {
         try {
-            var document = PDDocument.load(new File("1417.pdf"));
+            var document = PDDocument.load(new File("/home/insinfo/src/java_native/1417.pdf"));
             PDFTextStripperByArea stripper = new PDFTextStripperByArea();
             stripper.setSortByPosition(true);
             PDFTextStripper tStripper = new PDFTextStripper();

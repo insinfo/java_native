@@ -40,3 +40,7 @@ or
 
 ## para executar o executavel final
 .\app\build\native\nativeBuild\Example.exe
+
+#for linux
+sudo apt install zlib1g
+sudo apt install zlib1g-dev
