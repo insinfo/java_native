@@ -14,7 +14,7 @@ import java.security.Security;
 
 /**
  * derived from
- * https://github.com/micronaut-projects/micronaut-oracle-cloud/blob/master/oraclecloud-sdk/src/main/java/io/micronaut/oraclecloud/clients/BouncyCastleFeature.java
+ * https://github.com/chirontt/jgit.pgm.native/blob/main/src/main/java/com/github/chirontt/jgit/graalvm/BouncyCastleFeature.java
  */
 @AutomaticFeature
 public class BouncyCastleFeature implements Feature {
