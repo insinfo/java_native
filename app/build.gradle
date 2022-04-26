@@ -1,48 +1,164 @@
 plugins {
-    id 'application' //CLI application in Java
-    id 'org.graalvm.buildtools.native' version '0.9.4'
+    id 'application' //CLI application in Java for use "gradle installDist" or "gradle run"
+    id 'org.graalvm.buildtools.native' version '0.9.11'
+    //id 'com.github.johnrengelman.shadow' version '7.0.0' //for use gradle shadowJar | java -jar .\app\build\libs\app-all.jar
+    //id 'java'
 }
 
+//group = 'com.github.insinfo'
+version = '1.0.0'
+description = 'GraalVM Native Image test'
+
 ext {
-  pdfboxVersion = '2.0.25'
+  mainClassName = 'demo.Example' 
+  pdfboxVersion = '3.0.0-RC1' //'2.0.25'
+  graalvmVersion = '22.0.0.2'
+  slf4jVersion = '2.0.0-alpha7'
+  currentPlatform = getCurrentPlatform()
+  //for bug https://github.com/oracle/graal/issues/4466#issuecomment-1100726759
+  configFiles = 'build/cfg-files'
+  buildDir = 'build'
+  nativeImageDirName = "native-image-$currentPlatform"
+}
+
+//detect the OS (assuming 64-bit, on Intel/AMD hardware)
+private static String getCurrentPlatform() {
+    def currentOS = org.gradle.internal.os.OperatingSystem.current()
+    return currentOS.isLinux() ? 'linux' :
+           currentOS.isMacOsX() ? 'macos' :
+           currentOS.isWindows() ? 'windows' :
+           'unknown'
 }
 
 repositories {
     mavenCentral() 
     gradlePluginPortal()
+    //to add git repository as dependency 
+    //maven { url "https://jitpack.io" }
+}
+
+compileJava {
+    options.release = 11  //use GraalVM 21+ for compiling
+    options.encoding = 'UTF-8'
 }
 
 dependencies {
-    implementation "org.apache.pdfbox:pdfbox:${pdfboxVersion}"
-    implementation "org.apache.pdfbox:preflight:${pdfboxVersion}"
-    implementation "commons-io:commons-io:2.5"
-    implementation 'javax.activation:activation:1.1.1'
-    // Required for Tiff extraction. See: https://pdfbox.apache.org/2.0/dependencies.html
-    // https://svn.apache.org/viewvc/pdfbox/trunk/parent/pom.xml?view=markup
-    implementation 'com.github.jai-imageio:jai-imageio-core:1.3.1'
-    // testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1' 
-    // implementation 'com.google.guava:guava:30.1.1-jre' 
+    //implementation "org.apache.pdfbox:pdfbox:${pdfboxVersion}"       
+  //  implementation "org.apache.pdfbox:preflight:${pdfboxVersion}"
+  //  implementation "commons-io:commons-io:2.5"
+  //  implementation 'javax.activation:activation:1.1.1'
+    //- Required for Tiff extraction. See: https://pdfbox.apache.org/2.0/dependencies.html
+    //- https://svn.apache.org/viewvc/pdfbox/trunk/parent/pom.xml?view=markup
+   // implementation 'com.github.jai-imageio:jai-imageio-core:1.3.1'
+ 
+    implementation 'com.hierynomus:sshj:0.32.0'
+   // implementation 'org.slf4j:slf4j-api:1.7.36'
+   // implementation "org.slf4j:slf4j-log4j12:$slf4jVersion" //1.7.36
+    implementation "org.slf4j:slf4j-simple:$slf4jVersion"
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
+
+    //for compiling GraalVM substitution classes
+    compileOnly "org.graalvm.nativeimage:svm:$graalvmVersion"
+    //implementation 'com.oracle.substratevm:svm:19.2.1' 
+    implementation "org.graalvm.sdk:graal-sdk:$graalvmVersion"
+       
+    implementation 'com.github.mwiede:jsch:0.2.0'
+   // implementation 'com.github.insinfo:jsch:master-SNAPSHOT'
+   // implementation('org.example:jsch:jsch-0.2.0')        
+
+}
+
+run {  
+  systemProperties = System.getProperties()
+   //for bug https://github.com/oracle/graal/issues/4466#issuecomment-1100726759
+  jvmArgs = ["-agentlib:native-image-agent=config-merge-dir=$configFiles"]
 }
 
 application {
-    mainClass = 'demo.Example' 
+  mainClass = project.mainClassName
 }
 
-nativeBuild {
-  imageName = 'Example'
-  mainClass = 'demo.Example'
-  verbose = true // Add verbose output, defaults to false
-  useFatJar = true
-  // Advanced options
-  // Passes '-H:Extra' to the native image builder options.
-  // This can be used to pass parameters which are not directly supported by this extension
-  buildArgs.add('--native-image-info')
-  buildArgs.add('--verbose')
-  buildArgs.add('--report-unsupported-elements-at-runtime')
+// to create a fat jar
+//shadowJar {
+//    mainClassName = "demo.Example"
+//}
 
-  //buildArgs.add('--language:js')
-  buildArgs.add('--allow-incomplete-classpath')
+graalvmNative.binaries.main { //nativeBuild {
+  imageName = 'Example'
+  mainClass = project.mainClassName
+  debug = false
+  verbose = true // Add verbose output, defaults to false
+  fallback = false
+  useFatJar = false
   
+  buildArgs.add('--verbose')
+ // buildArgs.add('--report-unsupported-elements-at-runtime')
+
+  //to fix bug https://github.com/oracle/graal/issues/4466#issuecomment-1100726759
+  buildArgs.add('-H:ConfigurationFileDirectories=' + file(configFiles).path)
+
+   //packages/classes to be initialized at native image build time
+    def buildTimeInitClasses = [        
+        'com.google.gson',
+        'com.sun.beans.introspect.ClassInfo',
+        'com.sun.beans.introspect.PropertyInfo',
+        'java.beans.Introspector',
+        'org.apache.sshd',     
+        'org.slf4j',
+       // 'com.jcraft.jsch.jce.Random',   
+    ]
+
+    //packages/classes to be initialized at native image run time
+    def runTimeInitClasses = [
+        'org.apache.sshd.common.config.keys.loader.AESPrivateKeyObfuscator$LazyKeyLengthsHolder',    
+        'com.jcraft.jsch.jce.Random',    
+    ]
+  
+  //to enable charsets  
+  buildArgs.add('-H:+AddAllCharsets')
+  //buildArgs.add('--gc=epsilon')  //no garbage collector
+  buildArgs.add('--enable-url-protocols=http,https')
+ // buildArgs.add('--initialize-at-build-time=' + buildTimeInitClasses.join(','))
+ // buildArgs.add('--initialize-at-run-time=' + runTimeInitClasses.join(','))
+  buildArgs.add('--native-image-info')
+  buildArgs.add('--allow-incomplete-classpath')
+  buildArgs.add("-H:Path=$buildDir/$nativeImageDirName")
+  buildArgs.add("-H:TempDirectory=$buildDir/tmp/$nativeImageDirName")
+  buildArgs.add('-H:+TraceNativeToolUsage')
+
+  buildArgs.add('-H:+ReportExceptionStackTraces')
+
+  //buildArgs.add('--language:js')  
+  //-H:IncludeResources="org/jline/utils/*.*" 
     // Development options
-  agent = true // Enables the reflection agent. Can be also set on command line using '-Pagent'
+  //agent = true // Enables the reflection agent. Can be also set on command line using '-Pagent'
+
+  //to fix bug https://github.com/oracle/graal/issues/4072 
+  //if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+  if (currentPlatform == 'windows') {
+        //temp fix for the linker errors in Windows
+    buildArgs.add('-H:NativeLinkerOption=/export:JDK_LoadSystemLibrary') 
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_CallMethodByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_CallMethodByNameV')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_CallStaticMethodByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ClassString')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_GetEnv')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_GetFieldByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_GetStaticFieldByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_IsInstanceOfByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_NewObjectByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_NewStringPlatform')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_SetFieldByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ThrowArrayIndexOutOfBoundsException')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ThrowByName')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ThrowIOException')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ThrowIllegalArgumentException')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ThrowInternalError')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ThrowNullPointerException')  
+    buildArgs.add('-H:NativeLinkerOption=/export:JNU_ThrowOutOfMemoryError')  
+  } 
+  if (currentPlatform == 'linux') {
+    jvmArgs.add('-Djava.awt.headless=false')  //needed for Linux
+  }
+ 
 }

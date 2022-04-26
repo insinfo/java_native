@@ -1,0 +1,27 @@
+plugins { 
+    id "com.github.dkorotych.gradle-maven-exec" version "2.2.1"
+    id 'java-gradle-plugin'
+    id 'groovy'
+   
+}
+
+repositories {   
+    mavenCentral()
+    gradlePluginPortal() 
+}
+
+dependencies {
+    implementation "gradle.plugin.com.github.dkorotych.gradle.maven.exec:gradle-maven-exec-plugin:2.2.1" 
+}
+
+gradlePlugin {
+    // Define the plugin
+    plugins {
+        "external-maven-build" {
+           id = "external-maven-build"
+            implementationClass = "org.example.ExternalMavenBuilder"
+        }
+    }
+}
+
+

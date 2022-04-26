@@ -28,7 +28,7 @@ or
 jar cfe  Example.jar Example Example.class 
 native-image -jar Example.jar
 
-## para executar o app com gradle
+## para executar o app com gradle (é nessesario executar antes de gerar a imagem nativa)
 ./gradlew run --stacktrace
 
 ## para build com reflexão com gradle
@@ -36,7 +36,11 @@ native-image -jar Example.jar
 ./gradlew nativeBuild
 or
 .\gradlew -Pagent nativeBuild
-.\gradlew nativeBuild
+.\gradlew nativeBuild 
+or 
+gradle nativeBuild 
+or 
+gradle nativeCompile
 
 ## para executar o executavel final
 .\app\build\native\nativeBuild\Example.exe

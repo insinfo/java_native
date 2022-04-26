@@ -3,12 +3,3 @@
 
 # Ignore Gradle build output directory
 build
-
-.vscode/
-.idea/
-.gradle/
-bin/
-download/
-1439.pdf
-download.zip
-download2.zip
