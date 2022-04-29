@@ -50,22 +50,25 @@ dependencies {
     //- Required for Tiff extraction. See: https://pdfbox.apache.org/2.0/dependencies.html
     //- https://svn.apache.org/viewvc/pdfbox/trunk/parent/pom.xml?view=markup
    // implementation 'com.github.jai-imageio:jai-imageio-core:1.3.1'
- 
+   //for SSH/SFTP with sshj
     implementation 'com.hierynomus:sshj:0.32.0'
    // implementation 'org.slf4j:slf4j-api:1.7.36'
    // implementation "org.slf4j:slf4j-log4j12:$slf4jVersion" //1.7.36
     implementation "org.slf4j:slf4j-simple:$slf4jVersion"
     implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
-
     //for compiling GraalVM substitution classes
     compileOnly "org.graalvm.nativeimage:svm:$graalvmVersion"
     //implementation 'com.oracle.substratevm:svm:19.2.1' 
     implementation "org.graalvm.sdk:graal-sdk:$graalvmVersion"
-       
-    implementation 'com.github.mwiede:jsch:0.2.0'
-   // implementation 'com.github.insinfo:jsch:master-SNAPSHOT'
-   // implementation('org.example:jsch:jsch-0.2.0')        
 
+
+    //for SSH/SFTP with jsch
+    implementation 'com.github.mwiede:jsch:0.2.1'
+   // implementation 'com.github.insinfo:jsch:master-SNAPSHOT'
+   // implementation('org.example:jsch:jsch-0.2.0')   
+      
+   //for create tar.gz   
+    implementation 'org.apache.commons:commons-compress:1.21'
 }
 
 run {  

@@ -10,6 +10,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.time.Instant;
+import java.util.Base64;
 
 /*import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -27,9 +28,12 @@ public class Example {
         // /var/www/dart/intranetbrowser
         // scp root@192.168.133.13:/var/www/dart/file.tar.gz ./file.tar.gz
         var user = "root";
-        var pass = "pass";
-       // JSchExample.init("192.168.133.13", user, pass, "/var/www/dart/intranetbrowser", "C:/MyJavaProjects/java_native/download.zip");
-        SshjExample.init("192.168.133.13", user, pass, "/var/www/teste", "C:/MyJavaProjects/java_native/download2.zip");
+        var pass = new String(Base64.getDecoder().decode("MDhkZXNlY3QwNQ=="));
+        var host = "192.168.133.13";
+        var dirToDownload = "/var/www/dart/intranetbrowser";// "/var/www/teste";//teste/marcos/poo/projeto1_antigo_com_tudo
+        //JSchExample.init(host, user, pass, dirToDownload, "C:/MyJavaProjects/java_native/download.tar");
+       
+         SshjExample.init(host, user, pass, dirToDownload, "C:/MyJavaProjects/java_native/download2.zip");
         // download file
         /*
          * var fileName = "./1439.pdf";
