@@ -1,6 +1,6 @@
 package demo;
 
-import java.io.ByteArrayInputStream;
+/*import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,10 +22,10 @@ import java.util.Base64;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.BasicConfigurator;*/
 
 public class SshjExample {
-    public static void init(String host, String user, String pass, String dirToDownload,String outFile) {
+   /* public static void init(String host, String user, String pass, String dirToDownload,String outFile) {
         try {
             // ssh
             // enable log sshj
@@ -187,5 +187,5 @@ public class SshjExample {
             e.printStackTrace();
             System.out.println(String.format("downloadDirectoryAsZipRec: %s | path: %s ", e, sourcePath));
         }
-    }
+    }*/
 }

@@ -33,7 +33,7 @@ public class Example {
         var dirToDownload = "/var/www/dart/intranetbrowser";// "/var/www/teste";//teste/marcos/poo/projeto1_antigo_com_tudo
         //JSchExample.init(host, user, pass, dirToDownload, "C:/MyJavaProjects/java_native/download.tar");
        
-         SshjExample.init(host, user, pass, dirToDownload, "C:/MyJavaProjects/java_native/download2.zip");
+        SshdExample.init(host, user, pass, dirToDownload, "C:/MyJavaProjects/java_native/download2.zip");
         // download file
         /*
          * var fileName = "./1439.pdf";
